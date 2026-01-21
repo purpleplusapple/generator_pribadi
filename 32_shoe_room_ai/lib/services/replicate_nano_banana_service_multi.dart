@@ -43,7 +43,7 @@ class ReplicateNanoBananaService {
 
   // API Configuration
   // Note: In production, use environment variables or secure storage
-  static const _apiToken = 'r8_EiHpFSLMtBeXMeZaGORXyH1vbRY7C9m4Cjr6e';
+  static const _apiToken = 'dummy';
   static const _model = 'google/nano-banana';
   static const _baseUrl = 'https://api.replicate.com/v1';
 
