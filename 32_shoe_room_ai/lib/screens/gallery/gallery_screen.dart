@@ -23,6 +23,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
   final LaundryHistoryRepository _history = LaundryHistoryRepository();
 
   List<String> _resultIds = [];
+  List<ShoeAIConfig?> _results = [];
   bool _isLoading = true;
 
   @override
@@ -35,9 +36,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
     setState(() => _isLoading = true);
     try {
       final ids = await _history.getHistoryIds();
+      final results = await _storage.loadResults(ids);
+
       if (mounted) {
         setState(() {
           _resultIds = ids;
+          _results = results;
           _isLoading = false;
         });
       }
@@ -189,97 +193,81 @@ class _GalleryScreenState extends State<GalleryScreen> {
       itemCount: _resultIds.length,
       itemBuilder: (context, index) {
         final id = _resultIds[index];
-        return _buildGridItem(id);
+        final config = index < _results.length ? _results[index] : null;
+        return _buildGridItem(id, config);
       },
     );
   }
 
-  Widget _buildGridItem(String id) {
-    return FutureBuilder<ShoeAIConfig?>(
-      future: _storage.loadResult(id),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return GlassCard(
-            child: Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  ShoeAIColors.leatherTan.withValues(alpha: 0.5),
-                ),
-              ),
-            ),
-          );
-        }
-
-        final config = snapshot.data;
-        if (config == null) {
-          return GlassCard(
-            child: Center(
-              child: Icon(
-                Icons.error_outline,
-                color: ShoeAIColors.error.withValues(alpha: 0.5),
-              ),
-            ),
-          );
-        }
-
-        // Use generated image if available, otherwise use original
-        final imagePath = config.resultData?.generatedImagePath ?? config.originalImagePath;
-        if (imagePath == null) {
-          return GlassCard(
-            child: Center(
-              child: Icon(
-                Icons.error_outline,
-                color: ShoeAIColors.error.withValues(alpha: 0.5),
-              ),
-            ),
-          );
-        }
-
-        return GestureDetector(
-          onTap: () => _openFullscreen(imagePath, id),
-          onLongPress: () => _deleteResult(id),
-          child: GlassCard(
-            padding: EdgeInsets.zero,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(ShoeAISpacing.base),
-                    ),
-                    child: Image.file(
-                      File(imagePath),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(ShoeAISpacing.sm),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _formatDate(config.timestamp),
-                        style: ShoeAIText.caption,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      if (config.styleSelections.isNotEmpty)
-                        Text(
-                          '${config.styleSelections.length} styles',
-                          style: ShoeAIText.caption.copyWith(
-                            color: ShoeAIColors.metallicGold,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+  Widget _buildGridItem(String id, ShoeAIConfig? config) {
+    if (config == null) {
+      return GlassCard(
+        child: Center(
+          child: Icon(
+            Icons.error_outline,
+            color: ShoeAIColors.error.withValues(alpha: 0.5),
           ),
-        );
-      },
+        ),
+      );
+    }
+
+    // Use generated image if available, otherwise use original
+    final imagePath =
+        config.resultData?.generatedImagePath ?? config.originalImagePath;
+    if (imagePath == null) {
+      return GlassCard(
+        child: Center(
+          child: Icon(
+            Icons.error_outline,
+            color: ShoeAIColors.error.withValues(alpha: 0.5),
+          ),
+        ),
+      );
+    }
+
+    return GestureDetector(
+      onTap: () => _openFullscreen(imagePath, id),
+      onLongPress: () => _deleteResult(id),
+      child: GlassCard(
+        padding: EdgeInsets.zero,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(ShoeAISpacing.base),
+                ),
+                child: Image.file(
+                  File(imagePath),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(ShoeAISpacing.sm),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _formatDate(config.timestamp),
+                    style: ShoeAIText.caption,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (config.styleSelections.isNotEmpty)
+                    Text(
+                      '${config.styleSelections.length} styles',
+                      style: ShoeAIText.caption.copyWith(
+                        color: ShoeAIColors.metallicGold,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
