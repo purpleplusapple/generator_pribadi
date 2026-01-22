@@ -1,9 +1,6 @@
-// lib/root_shell.dart
-// App shell with bottom navigation
-
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'theme/beauty_salon_ai_theme.dart';
-import 'widgets/clean_bubble_background.dart';
 import 'screens/home/home_screen.dart';
 import 'screens/wizard/wizard_screen.dart';
 import 'screens/gallery/gallery_screen.dart';
@@ -19,7 +16,6 @@ class RootShell extends StatefulWidget {
 class _RootShellState extends State<RootShell> {
   int _currentIndex = 0;
 
-  // Screens for each tab
   final List<Widget> _screens = [
     const HomeScreen(),
     const WizardScreen(),
@@ -30,97 +26,76 @@ class _RootShellState extends State<RootShell> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true,
-      backgroundColor: BeautyAIColors.charcoal,
-      body: Stack(
-        children: [
-          // Animated background
-          const Positioned.fill(
-            child: CleanBubbleBackground(),
-          ),
-          // Current screen
-          _screens[_currentIndex],
-        ],
-      ),
-      bottomNavigationBar: _buildBottomNav(),
+      extendBody: true, // Allow body to go behind floating nav
+      backgroundColor: BeautyAIColors.bg0,
+      body: _screens[_currentIndex],
+      bottomNavigationBar: _buildFloatingNav(),
     );
   }
 
-  Widget _buildBottomNav() {
-    return Container(
-      decoration: BoxDecoration(
-        color: BeautyAIColors.charcoal.withValues(alpha: 0.8),
-        border: Border(
-          top: BorderSide(
-            color: BeautyAIColors.creamWhite.withValues(alpha: 0.1),
-            width: 1,
-          ),
-        ),
-      ),
-      child: SafeArea(
-        top: false,
-        child: SizedBox(
-          height: 64,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavItem(
-                icon: Icons.home_rounded,
-                label: 'Home',
-                index: 0,
-              ),
-              _buildNavItem(
-                icon: Icons.auto_fix_high_rounded,
-                label: 'Wizard',
-                index: 1,
-              ),
-              _buildNavItem(
-                icon: Icons.grid_view_rounded,
-                label: 'Gallery',
-                index: 2,
-              ),
-              _buildNavItem(
-                icon: Icons.settings_rounded,
-                label: 'Settings',
-                index: 3,
-              ),
-            ],
+  Widget _buildFloatingNav() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(32),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+          child: Container(
+            height: 72,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.85),
+              borderRadius: BorderRadius.circular(32),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
+              boxShadow: BeautyAIShadows.floating,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildNavItem(Icons.spa_rounded, 'Home', 0),
+                _buildNavItem(Icons.auto_fix_high_rounded, 'Create', 1),
+                _buildNavItem(Icons.grid_view_rounded, 'Gallery', 2),
+                _buildNavItem(Icons.person_rounded, 'Profile', 3),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildNavItem({
-    required IconData icon,
-    required String label,
-    required int index,
-  }) {
+  Widget _buildNavItem(IconData icon, String label, int index) {
     final isSelected = _currentIndex == index;
 
-    return Expanded(
-      child: InkWell(
-        onTap: () => setState(() => _currentIndex = index),
+    return GestureDetector(
+      onTap: () => setState(() => _currentIndex = index),
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: BeautyAIMotion.fast,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? BeautyAIColors.primary.withValues(alpha: 0.1) : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+        ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               icon,
-              color: isSelected
-                  ? BeautyAIColors.roseGold
-                  : BeautyAIColors.creamWhite.withValues(alpha: 0.5),
-              size: 26,
+              color: isSelected ? BeautyAIColors.primary : BeautyAIColors.muted,
+              size: 24,
             ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: BeautyAIText.small.copyWith(
-                color: isSelected
-                    ? BeautyAIColors.roseGold
-                    : BeautyAIColors.creamWhite.withValues(alpha: 0.5),
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+            if (isSelected) ...[
+              const SizedBox(height: 2),
+              Text(
+                label,
+                style: BeautyAIText.caption.copyWith(
+                  color: BeautyAIColors.primary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 10,
+                ),
               ),
-            ),
+            ],
           ],
         ),
       ),

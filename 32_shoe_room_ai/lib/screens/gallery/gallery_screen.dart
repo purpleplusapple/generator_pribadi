@@ -22,7 +22,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
   final LaundryResultStorage _storage = LaundryResultStorage();
   final LaundryHistoryRepository _history = LaundryHistoryRepository();
 
-  List<ShoeAIConfig> _results = [];
+  List<String> _resultIds = [];
   bool _isLoading = true;
 
   @override
@@ -35,12 +35,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
     setState(() => _isLoading = true);
     try {
       final ids = await _history.getHistoryIds();
-      final results = await Future.wait(
-        ids.map((id) => _storage.loadResult(id)),
-      );
       if (mounted) {
         setState(() {
-          _results = results.whereType<ShoeAIConfig>().toList();
+          _resultIds = ids;
           _isLoading = false;
         });
       }
@@ -110,11 +107,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
     }
   }
 
-  void _openFullscreen(ShoeAIConfig config) {
-    final imagePath = config.resultData?.generatedImagePath ?? config.originalImagePath;
-    if (imagePath == null) return;
-    final id = config.timestamp.toIso8601String();
-
+  void _openFullscreen(String imagePath, String id) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => FullscreenViewer(
@@ -132,7 +125,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
       appBar: AppBar(
         title: const Text('Gallery'),
         actions: [
-          if (_results.isNotEmpty)
+          if (_resultIds.isNotEmpty)
             IconButton(
               onPressed: _clearAllResults,
               icon: const Icon(Icons.delete_sweep_rounded),
@@ -149,7 +142,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                   valueColor: AlwaysStoppedAnimation<Color>(ShoeAIColors.leatherTan),
                 ),
               )
-            : _results.isEmpty
+            : _resultIds.isEmpty
                 ? _buildEmptyState()
                 : _buildGrid(),
       ),
@@ -193,72 +186,100 @@ class _GalleryScreenState extends State<GalleryScreen> {
         mainAxisSpacing: ShoeAISpacing.md,
         childAspectRatio: 0.75,
       ),
-      itemCount: _results.length,
+      itemCount: _resultIds.length,
       itemBuilder: (context, index) {
-        final config = _results[index];
-        return _buildGridItem(config);
+        final id = _resultIds[index];
+        return _buildGridItem(id);
       },
     );
   }
 
-  Widget _buildGridItem(ShoeAIConfig config) {
-    final imagePath = config.resultData?.generatedImagePath ?? config.originalImagePath;
-    final id = config.timestamp.toIso8601String();
-
-    if (imagePath == null) {
-      return GlassCard(
-        child: Center(
-          child: Icon(
-            Icons.error_outline,
-            color: ShoeAIColors.error.withValues(alpha: 0.5),
-          ),
-        ),
-      );
-    }
-
-    return GestureDetector(
-      onTap: () => _openFullscreen(config),
-      onLongPress: () => _deleteResult(id),
-      child: GlassCard(
-        padding: EdgeInsets.zero,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(ShoeAISpacing.base),
-                ),
-                child: Image.file(
-                  File(imagePath),
-                  fit: BoxFit.cover,
+  Widget _buildGridItem(String id) {
+    return FutureBuilder<ShoeAIConfig?>(
+      future: _storage.loadResult(id),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return GlassCard(
+            child: Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  ShoeAIColors.leatherTan.withValues(alpha: 0.5),
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(ShoeAISpacing.sm),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _formatDate(config.timestamp),
-                    style: ShoeAIText.caption,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  if (config.styleSelections.isNotEmpty)
-                    Text(
-                      '${config.styleSelections.length} styles',
-                      style: ShoeAIText.caption.copyWith(
-                        color: ShoeAIColors.metallicGold,
-                      ),
+          );
+        }
+
+        final config = snapshot.data;
+        if (config == null) {
+          return GlassCard(
+            child: Center(
+              child: Icon(
+                Icons.error_outline,
+                color: ShoeAIColors.error.withValues(alpha: 0.5),
+              ),
+            ),
+          );
+        }
+
+        // Use generated image if available, otherwise use original
+        final imagePath = config.resultData?.generatedImagePath ?? config.originalImagePath;
+        if (imagePath == null) {
+          return GlassCard(
+            child: Center(
+              child: Icon(
+                Icons.error_outline,
+                color: ShoeAIColors.error.withValues(alpha: 0.5),
+              ),
+            ),
+          );
+        }
+
+        return GestureDetector(
+          onTap: () => _openFullscreen(imagePath, id),
+          onLongPress: () => _deleteResult(id),
+          child: GlassCard(
+            padding: EdgeInsets.zero,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(ShoeAISpacing.base),
                     ),
-                ],
-              ),
+                    child: Image.file(
+                      File(imagePath),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(ShoeAISpacing.sm),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _formatDate(config.timestamp),
+                        style: ShoeAIText.caption,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      if (config.styleSelections.isNotEmpty)
+                        Text(
+                          '${config.styleSelections.length} styles',
+                          style: ShoeAIText.caption.copyWith(
+                            color: ShoeAIColors.metallicGold,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
