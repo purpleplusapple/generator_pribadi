@@ -21,7 +21,7 @@ class GalleryScreen extends StatefulWidget {
 class _GalleryScreenState extends State<GalleryScreen> {
   final LaundryResultStorage _storage = LaundryResultStorage();
   final LaundryHistoryRepository _history = LaundryHistoryRepository();
-  
+
   List<String> _resultIds = [];
   bool _isLoading = true;
 
