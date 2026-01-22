@@ -1,58 +1,55 @@
 // lib/services/shoe_history_repository.dart
 // Repository for managing history list of saved results
 
-import 'preferences_service.dart';
+import 'database_service.dart';
 import 'shoe_result_storage.dart';
 
 class LaundryHistoryRepository {
-  static const String _historyKey = 'shoe_history_ids';
-
-  final PreferencesService _prefs = PreferencesService.instance;
+  final DatabaseService _db = DatabaseService.instance;
   final LaundryResultStorage _storage = LaundryResultStorage();
+
+  // Flag to track if migration has been attempted
+  static bool _migrationAttempted = false;
+
+  /// Ensure migration is done.
+  Future<void> _ensureMigrated() async {
+    if (!_migrationAttempted) {
+      _migrationAttempted = true;
+      await _db.migrateFromPrefs();
+    }
+  }
 
   /// Get list of all result IDs in history (newest first)
   Future<List<String>> getHistoryIds() async {
-    final ids = _prefs.getStringList(_historyKey) ?? [];
-    return ids;
+    await _ensureMigrated();
+    return await _db.getHistoryIds();
   }
 
   /// Add a new result ID to history (at the beginning)
   Future<void> addToHistory(String id) async {
-    final ids = await getHistoryIds();
-    
-    // Remove if already exists (to avoid duplicates)
-    ids.remove(id);
-    
-    // Add to beginning (newest first)
-    ids.insert(0, id);
-    
-    await _prefs.setStringList(_historyKey, ids);
+    await _ensureMigrated();
+    // Update timestamp to make it newest.
+    // Note: The item must presumably exist in the database (saved via LaundryResultStorage).
+    // If it doesn't, this might be a no-op, but addToHistory generally implies the item is being tracked.
+    await _db.touchResult(id);
   }
 
   /// Remove a result ID from history and delete its data
   Future<void> removeFromHistory(String id) async {
-    final ids = await getHistoryIds();
-    ids.remove(id);
-    await _prefs.setStringList(_historyKey, ids);
-    
-    // Also delete the result data
+    await _ensureMigrated();
+    // Deleting the result removes it from history effectively
     await _storage.deleteResult(id);
   }
 
   /// Clear all history and delete all result data
   Future<void> clearHistory() async {
-    final ids = await getHistoryIds();
-    
-    // Delete all result data
-    await Future.wait(ids.map((id) => _storage.deleteResult(id)));
-    
-    // Clear history list
-    await _prefs.remove(_historyKey);
+    await _ensureMigrated();
+    await _db.clearAll();
   }
 
   /// Get count of items in history
   Future<int> getHistoryCount() async {
-    final ids = await getHistoryIds();
-    return ids.length;
+    await _ensureMigrated();
+    return await _db.getHistoryCount();
   }
 }
