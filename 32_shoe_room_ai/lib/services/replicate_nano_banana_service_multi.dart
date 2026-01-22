@@ -62,38 +62,15 @@ class ReplicateNanoBananaService {
     int maxWidth = 2048,
     int maxHeight = 2048,
   }) async {
-    try {
-      final decoded = img.decodeImage(bytes);
-      if (decoded == null) {
-        final b64 = base64Encode(bytes);
-        return 'data:image/png;base64,$b64';
-      }
-
-      int quality = 92;
-      img.Image current = decoded;
-
-      if (decoded.width > maxWidth || decoded.height > maxHeight) {
-        current = img.copyResize(
-          decoded,
-          width: decoded.width > decoded.height ? maxWidth : null,
-          height: decoded.height >= decoded.width ? maxHeight : null,
-          interpolation: img.Interpolation.linear,
-        );
-      }
-
-      Uint8List out = Uint8List.fromList(img.encodeJpg(current, quality: quality));
-      while (out.lengthInBytes > targetKB * 1024 && quality > 40) {
-        quality -= 10;
-        out = Uint8List.fromList(img.encodeJpg(current, quality: quality));
-      }
-
-      final b64 = base64Encode(out);
-      return 'data:image/jpeg;base64,$b64';
-    } catch (e) {
-      debugPrint('[ReplicateService] Image processing error: $e');
-      final b64 = base64Encode(bytes);
-      return 'data:image/jpeg;base64,$b64';
-    }
+    return compute(
+      _processImageInIsolate,
+      {
+        'bytes': bytes,
+        'targetKB': targetKB,
+        'maxWidth': maxWidth,
+        'maxHeight': maxHeight,
+      },
+    );
   }
 
   /// Generates an AI exterior redesign from input images and prompt
@@ -125,14 +102,11 @@ class ReplicateNanoBananaService {
     final safePrompt = check.sanitized;
 
     onStageChanged?.call('Processing your exterior photo...');
-    final dataUrls = <String>[];
-    for (final bytes in images) {
-      final dataUrl = await _bytesToDataUrlJpeg(
-        bytes: bytes,
-        targetKB: targetKBPerImage,
-      );
-      dataUrls.add(dataUrl);
-    }
+    final futures = images.map((bytes) => _bytesToDataUrlJpeg(
+          bytes: bytes,
+          targetKB: targetKBPerImage,
+        ));
+    final dataUrls = await Future.wait(futures);
 
     onStageChanged?.call('Starting AI generation...');
     final predictionId = await _createPrediction(
@@ -315,5 +289,45 @@ class ReplicateNanoBananaService {
   /// Disposes the HTTP client
   void dispose() {
     _client.close();
+  }
+}
+
+Future<String> _processImageInIsolate(Map<String, dynamic> params) async {
+  final bytes = params['bytes'] as Uint8List;
+  final targetKB = params['targetKB'] as int;
+  final maxWidth = params['maxWidth'] as int;
+  final maxHeight = params['maxHeight'] as int;
+
+  try {
+    final decoded = img.decodeImage(bytes);
+    if (decoded == null) {
+      final b64 = base64Encode(bytes);
+      return 'data:image/png;base64,$b64';
+    }
+
+    int quality = 92;
+    img.Image current = decoded;
+
+    if (decoded.width > maxWidth || decoded.height > maxHeight) {
+      current = img.copyResize(
+        decoded,
+        width: decoded.width > decoded.height ? maxWidth : null,
+        height: decoded.height >= decoded.width ? maxHeight : null,
+        interpolation: img.Interpolation.linear,
+      );
+    }
+
+    Uint8List out = Uint8List.fromList(img.encodeJpg(current, quality: quality));
+    while (out.lengthInBytes > targetKB * 1024 && quality > 40) {
+      quality -= 10;
+      out = Uint8List.fromList(img.encodeJpg(current, quality: quality));
+    }
+
+    final b64 = base64Encode(out);
+    return 'data:image/jpeg;base64,$b64';
+  } catch (e) {
+    debugPrint('[ReplicateService] Image processing error in isolate: $e');
+    final b64 = base64Encode(bytes);
+    return 'data:image/jpeg;base64,$b64';
   }
 }
