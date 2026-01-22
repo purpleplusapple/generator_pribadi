@@ -5,8 +5,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:image/image.dart' as img;
 
+import 'image_processing.dart';
 import 'safe_prompt_filter.dart';
 
 /// Exception thrown when prompt contains unsafe content
@@ -62,38 +62,15 @@ class ReplicateNanoBananaService {
     int maxWidth = 2048,
     int maxHeight = 2048,
   }) async {
-    try {
-      final decoded = img.decodeImage(bytes);
-      if (decoded == null) {
-        final b64 = base64Encode(bytes);
-        return 'data:image/png;base64,$b64';
-      }
-
-      int quality = 92;
-      img.Image current = decoded;
-
-      if (decoded.width > maxWidth || decoded.height > maxHeight) {
-        current = img.copyResize(
-          decoded,
-          width: decoded.width > decoded.height ? maxWidth : null,
-          height: decoded.height >= decoded.width ? maxHeight : null,
-          interpolation: img.Interpolation.linear,
-        );
-      }
-
-      Uint8List out = Uint8List.fromList(img.encodeJpg(current, quality: quality));
-      while (out.lengthInBytes > targetKB * 1024 && quality > 40) {
-        quality -= 10;
-        out = Uint8List.fromList(img.encodeJpg(current, quality: quality));
-      }
-
-      final b64 = base64Encode(out);
-      return 'data:image/jpeg;base64,$b64';
-    } catch (e) {
-      debugPrint('[ReplicateService] Image processing error: $e');
-      final b64 = base64Encode(bytes);
-      return 'data:image/jpeg;base64,$b64';
-    }
+    return compute(
+      processImageToDataUrl,
+      ImageProcessRequest(
+        bytes: bytes,
+        targetKB: targetKB,
+        maxWidth: maxWidth,
+        maxHeight: maxHeight,
+      ),
+    );
   }
 
   /// Generates an AI exterior redesign from input images and prompt
