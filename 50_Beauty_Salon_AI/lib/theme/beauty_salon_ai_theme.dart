@@ -22,6 +22,12 @@ class BeautyAIColors {
   static const primarySoft = Color(0xFFF7D3E3); // Chips/Surfaces
   static const accent = Color(0xFF7A4EE6); // Orchid Highlight
   static const line = Color(0xFFE9DCE6);
+  static const charcoal = Color(0xFF1B1520);
+  static const pitBlack = Color(0xFF0D0B0F);
+  static const creamWhite = Color(0xFFFFF4F8);
+  static const roseGold = Color(0xFFD4718C);
+  static const metallicGold = Color(0xFFE8C37B);
+  static const sageGreen = Color(0xFF9DB6A4);
 
   // Mappings for semantic usage
   static const mainBackground = bg0;
@@ -69,6 +75,18 @@ class BeautyAIGradients {
     end: Alignment.bottomRight,
     colors: [BeautyAIColors.accent, Color(0xFF6236C5)],
   );
+
+  static const primaryCta = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [BeautyAIColors.roseGold, BeautyAIColors.metallicGold],
+  );
+
+  static const accentHighlight = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [BeautyAIColors.sageGreen, BeautyAIColors.creamWhite],
+  );
 }
 
 // =================== TYPOGRAPHY ===================
@@ -115,6 +133,15 @@ class BeautyAIText {
     color: BeautyAIColors.muted,
   );
 
+  static final captionMedium = _bodyStyle.copyWith(
+    fontSize: 12, fontWeight: FontWeight.w600, height: 1.4,
+    color: BeautyAIColors.muted,
+  );
+
+  static final small = _bodyStyle.copyWith(
+    fontSize: 11, fontWeight: FontWeight.w500, height: 1.3,
+  );
+
   static final button = _bodyStyle.copyWith(
     fontSize: 15, fontWeight: FontWeight.w600, letterSpacing: 0.2,
   );
@@ -143,12 +170,18 @@ class BeautyAIRadii {
   static const double sm = 12;
   static const double md = 18; // Primary shape
   static const double lg = 24;
+  static const double card = 22;
+  static const double button = 18;
+  static const double chip = 14;
   static const double full = 999;
 
   static BorderRadius get smRadius => BorderRadius.circular(sm);
   static BorderRadius get mdRadius => BorderRadius.circular(md);
   static BorderRadius get lgRadius => BorderRadius.circular(lg);
   static BorderRadius get fullRadius => BorderRadius.circular(full);
+  static BorderRadius get cardRadius => BorderRadius.circular(card);
+  static BorderRadius get buttonRadius => BorderRadius.circular(button);
+  static BorderRadius get chipRadius => BorderRadius.circular(chip);
 }
 
 // =================== SHADOWS ===================
@@ -170,6 +203,21 @@ class BeautyAIShadows {
      BoxShadow(color: Colors.white.withValues(alpha: 0.5), blurRadius: 0, spreadRadius: 1), // Inner highlight feeling
      BoxShadow(color: BeautyAIColors.ink0.withValues(alpha: 0.05), blurRadius: 12, offset: const Offset(0, 4)),
   ];
+
+  static List<BoxShadow> get card => [
+    BoxShadow(color: BeautyAIColors.charcoal.withValues(alpha: 0.12), blurRadius: 18, offset: const Offset(0, 10)),
+    BoxShadow(color: BeautyAIColors.roseGold.withValues(alpha: 0.08), blurRadius: 24, offset: const Offset(0, 12)),
+  ];
+
+  static List<BoxShadow> goldGlow({double opacity = 0.4}) => [
+    BoxShadow(color: BeautyAIColors.metallicGold.withValues(alpha: opacity), blurRadius: 18, offset: const Offset(0, 6)),
+    BoxShadow(color: BeautyAIColors.roseGold.withValues(alpha: opacity * 0.6), blurRadius: 28, offset: const Offset(0, 10)),
+  ];
+
+  static List<BoxShadow> tanGlow({double opacity = 0.4}) => [
+    BoxShadow(color: BeautyAIColors.roseGold.withValues(alpha: opacity), blurRadius: 16, offset: const Offset(0, 6)),
+    BoxShadow(color: BeautyAIColors.creamWhite.withValues(alpha: opacity * 0.5), blurRadius: 28, offset: const Offset(0, 12)),
+  ];
 }
 
 // =================== GLASS FORMULA ===================
@@ -180,6 +228,10 @@ class BeautyAIGlass {
   static const double blurSigma = 16;
   static const double opacity = 0.82; // 82% white
   static const Color borderColor = BeautyAIColors.line;
+  static const double cardBlurSigma = 16;
+  static const double fillOpacity = 0.18;
+  static const double borderOpacity = 0.35;
+  static const double borderWidth = 1.2;
 }
 
 // =================== MOTION ===================
@@ -192,6 +244,9 @@ class BeautyAIMotion {
   static const Duration slow = Duration(milliseconds: 600);
 
   static const Curve easeOut = Curves.easeOutCubic;
+  static const Curve standardEasing = Curves.easeOutCubic;
+  static const Curve emphasizedEasing = Curves.easeOutBack;
+  static const double buttonPressScale = 0.97;
 }
 
 // =================== THEME DATA ===================
