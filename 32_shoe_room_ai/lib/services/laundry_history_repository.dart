@@ -44,9 +44,7 @@ class LaundryHistoryRepository {
     final ids = await getHistoryIds();
     
     // Delete all result data
-    for (final id in ids) {
-      await _storage.deleteResult(id);
-    }
+    await Future.wait(ids.map((id) => _storage.deleteResult(id)));
     
     // Clear history list
     await _prefs.remove(_historyKey);
