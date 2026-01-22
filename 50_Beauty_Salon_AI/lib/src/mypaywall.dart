@@ -21,19 +21,19 @@ import 'package:beauty_salon_ai/theme/beauty_salon_ai_theme.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-const _bgBase = BeautyAIColors.pitBlack;
-const _bgOverlay = Color(0x66101122);
+const _bgBase = BeautyAIColors.bg0;
+const _bgOverlay = Color(0x66FFFFFF);
 
-// Neon teal/green for primary
-const _primary = Color(0xFF00E5FF);
-const _primarySoft = Color(0x3300E5FF);
+// Theme Colors
+const _primary = BeautyAIColors.primary;
+const _primarySoft = BeautyAIColors.primarySoft;
 
-// Accent = hazard orange (matches accentGradient)
-const _accent = Color(0xFFFF8A00);
-const _accentSoft = Color(0x33FF8A00);
+// Accent
+const _accent = BeautyAIColors.accent;
+const _accentSoft = Color(0x337A4EE6); // 20% accent
 
-const _textPrimary = BeautyAIColors.textMain;
-const _textSecondary = BeautyAIColors.textMuted;
+const _textPrimary = BeautyAIColors.ink0;
+const _textSecondary = BeautyAIColors.muted;
 
 class BeautySalonPaywall extends StatefulWidget {
   const BeautySalonPaywall({super.key});
@@ -176,11 +176,11 @@ class _BeautySalonPaywallState extends State<BeautySalonPaywall>
                           icon: const Icon(
                             CupertinoIcons.arrow_right_circle_fill,
                             size: 20,
-                            color: _bgBase,
+                            color: Colors.white,
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: _primary,
-                            foregroundColor: _bgBase,
+                            foregroundColor: Colors.white,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18),
@@ -196,7 +196,7 @@ class _BeautySalonPaywallState extends State<BeautySalonPaywall>
                                   height: 20,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    color: _bgBase,
+                                    color: Colors.white,
                                   ),
                                 )
                               : FittedBox(
@@ -210,23 +210,6 @@ class _BeautySalonPaywallState extends State<BeautySalonPaywall>
                                     ),
                                   ),
                                 ),
-                        ),
-                      ),
-                      // Subtle border shimmer
-                      Positioned.fill(
-                        child: IgnorePointer(
-                          child: Opacity(
-                            opacity: 0.18 + (0.18 * _ctaCurve.value),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(18),
-                                border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.18),
-                                  width: 1,
-                                ),
-                              ),
-                            ),
-                          ),
                         ),
                       ),
                     ],
@@ -325,7 +308,7 @@ class _BeautySalonPaywallState extends State<BeautySalonPaywall>
       backgroundColor: _bgBase,
       body: Stack(
         children: [
-          // Background gradient
+          // Background gradient (Light)
           Positioned.fill(
             child: Container(
               decoration: const BoxDecoration(
@@ -333,9 +316,8 @@ class _BeautySalonPaywallState extends State<BeautySalonPaywall>
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Color(0xFF020817),
-                    Color(0xFF030712),
-                    Color(0xFF020817),
+                    BeautyAIColors.bg0,
+                    BeautyAIColors.bg1,
                   ],
                 ),
               ),
@@ -392,7 +374,7 @@ class _BeautySalonPaywallState extends State<BeautySalonPaywall>
                 child: IconButton(
                   icon: const Icon(
                     CupertinoIcons.xmark_circle_fill,
-                    color: Colors.white70,
+                    color: BeautyAIColors.muted,
                     size: 26,
                   ),
                   onPressed: () => Navigator.maybePop(context),
@@ -421,7 +403,7 @@ class _BeautySalonPaywallState extends State<BeautySalonPaywall>
                       borderRadius: BorderRadius.circular(14),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.55),
+                          color: BeautyAIColors.ink0.withValues(alpha: 0.1),
                           blurRadius: 22,
                           offset: const Offset(0, 10),
                         ),
@@ -480,12 +462,12 @@ class _BeautySalonPaywallState extends State<BeautySalonPaywall>
                   ),
                   margin: const EdgeInsets.only(bottom: 14),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.03),
+                    color: _primary.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
                       color: isPro
                           ? _primary.withValues(alpha: 0.7)
-                          : Colors.white.withValues(alpha: 0.18),
+                          : _textSecondary.withValues(alpha: 0.2),
                       width: 0.9,
                     ),
                   ),
@@ -498,9 +480,9 @@ class _BeautySalonPaywallState extends State<BeautySalonPaywall>
                           shape: BoxShape.circle,
                           color: isPro
                               ? _primarySoft
-                              : Colors.white.withValues(alpha: 0.06),
+                              : Colors.white,
                           border: Border.all(
-                            color: isPro ? _primary : Colors.white24,
+                            color: isPro ? _primary : _textSecondary.withValues(alpha: 0.3),
                             width: 0.9,
                           ),
                         ),
@@ -509,7 +491,7 @@ class _BeautySalonPaywallState extends State<BeautySalonPaywall>
                               ? CupertinoIcons.checkmark_seal_fill
                               : CupertinoIcons.shield_lefthalf_fill,
                           size: 16,
-                          color: isPro ? _primary : Colors.white70,
+                          color: isPro ? _primary : _textSecondary,
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -570,30 +552,30 @@ class _BeautySalonPaywallState extends State<BeautySalonPaywall>
             const SizedBox(height: 22),
 
             // Social proof
-            _sectionTitle("Trusted by salon owners and designers"),
+            _sectionTitle("Trusted by salon owners"),
             const SizedBox(height: 10),
             _ratingsSummary(avg: 4.8, total: 12431),
             const SizedBox(height: 10),
             _reviewCard(
-              name: "Ken",
+              name: "Sarah",
               stars: 5,
               date: "2 days ago",
               review:
-                  "I can present two build looks in minutes and iterate with clients fast.",
+                  "I visualized my new spa layout in minutes. Saved me weeks of planning.",
             ),
             _reviewCard(
-              name: "Dina",
+              name: "Jessica",
               stars: 5,
               date: "Last week",
               review:
-                  "Premium lets me export every preset in high-res for my client decks.",
+                  "Premium renders are stunning. Used them to pitch investors.",
             ),
             _reviewCard(
-              name: "Andi",
+              name: "Mike",
               stars: 5,
               date: "3 weeks ago",
               review:
-                  "Tokens help when I need extra renders during busy design sprints.",
+                  "Tokens help when I need extra renders during renovations.",
             ),
 
             const SizedBox(height: 22),
@@ -740,9 +722,10 @@ Widget _feature(String text) {
     margin: const EdgeInsets.symmetric(vertical: 5),
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
     decoration: BoxDecoration(
-      color: Colors.white.withValues(alpha: 0.04),
+      color: Colors.white,
       borderRadius: BorderRadius.circular(14),
-      border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+      border: Border.all(color: BeautyAIColors.line),
+      boxShadow: BeautyAIShadows.soft,
     ),
     child: Row(
       children: [
@@ -793,7 +776,7 @@ Widget _timeline() {
     const _Milestone(
       title: "Week 1",
       desc:
-          "Share multiple design options with friends or clients effortlessly.",
+          "Share multiple design options with partners or clients effortlessly.",
       icon: CupertinoIcons.person_2_fill,
     ),
     const _Milestone(
@@ -807,9 +790,10 @@ Widget _timeline() {
   return Container(
     padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
     decoration: BoxDecoration(
-      color: Colors.white.withValues(alpha: 0.03),
+      color: Colors.white,
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+      border: Border.all(color: BeautyAIColors.line),
+      boxShadow: BeautyAIShadows.soft,
     ),
     child: Column(
       children: List.generate(items.length, (i) {
@@ -837,7 +821,7 @@ Widget _timeline() {
                   child: const Icon(
                     CupertinoIcons.check_mark,
                     size: 11,
-                    color: _bgBase,
+                    color: Colors.white,
                   ),
                 ),
                 if (!last)
@@ -845,7 +829,7 @@ Widget _timeline() {
                     width: 2,
                     height: 34,
                     margin: const EdgeInsets.symmetric(vertical: 3),
-                    color: Colors.white.withValues(alpha: 0.16),
+                    color: BeautyAIColors.line,
                   ),
               ],
             ),
@@ -902,9 +886,10 @@ Widget _ratingsSummary({
   return Container(
     padding: const EdgeInsets.all(14),
     decoration: BoxDecoration(
-      color: Colors.white.withValues(alpha: 0.04),
+      color: Colors.white,
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+      border: Border.all(color: BeautyAIColors.line),
+      boxShadow: BeautyAIShadows.soft,
     ),
     child: Row(
       children: [
@@ -962,7 +947,7 @@ Widget _ratingsSummary({
                           children: [
                             Container(
                               height: 7,
-                              color: Colors.white.withValues(alpha: 0.08),
+                              color: BeautyAIColors.line,
                             ),
                             FractionallySizedBox(
                               widthFactor: pct,
@@ -1054,9 +1039,10 @@ Widget _reviewCard({
     margin: const EdgeInsets.symmetric(vertical: 5),
     padding: const EdgeInsets.all(12),
     decoration: BoxDecoration(
-      color: Colors.white.withValues(alpha: 0.03),
+      color: Colors.white,
       borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+      border: Border.all(color: BeautyAIColors.line),
+      boxShadow: BeautyAIShadows.soft,
     ),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1140,16 +1126,16 @@ Widget _planCard({
     padding: const EdgeInsets.all(14),
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(16),
-      color: Colors.white.withValues(alpha: isBest ? 0.09 : 0.05),
+      color: isBest ? _primary.withValues(alpha: 0.05) : Colors.white,
       border: Border.all(
         color: isBest
-            ? _primary.withValues(alpha: 0.55)
-            : Colors.white.withValues(alpha: 0.16),
+            ? _primary
+            : BeautyAIColors.line,
         width: isBest ? 1.2 : 0.9,
       ),
       boxShadow: [
         BoxShadow(
-          color: (isBest ? _accent : _primary).withValues(alpha: 0.26),
+          color: (isBest ? _accent : BeautyAIColors.ink0).withValues(alpha: 0.05),
           blurRadius: 18,
           offset: const Offset(0, 10),
         ),
@@ -1239,7 +1225,7 @@ Widget _planCard({
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: _primary,
-              foregroundColor: _bgBase,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 14),
               elevation: 0,
               shape: RoundedRectangleBorder(
@@ -1253,7 +1239,7 @@ Widget _planCard({
                     height: 18,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: _bgBase,
+                      color: Colors.white,
                     ),
                   )
                 : const Text(
@@ -1312,9 +1298,9 @@ Widget _tokenCard({
     margin: const EdgeInsets.symmetric(vertical: 5),
     padding: const EdgeInsets.all(12),
     decoration: BoxDecoration(
-      color: Colors.white.withValues(alpha: 0.03),
+      color: Colors.white,
       borderRadius: BorderRadius.circular(14),
-      border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
+      border: Border.all(color: BeautyAIColors.line),
     ),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1358,7 +1344,7 @@ Widget _tokenCard({
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: _primary,
-              foregroundColor: _bgBase,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 12),
               elevation: 0,
               shape: RoundedRectangleBorder(
@@ -1372,7 +1358,7 @@ Widget _tokenCard({
                     height: 16,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: _bgBase,
+                      color: Colors.white,
                     ),
                   )
                 : const Text(
@@ -1409,7 +1395,7 @@ String _getPlanDescription(PackageType type) {
     case PackageType.monthly:
       return "Reliable access for designers who iterate on spaces every week.";
     case PackageType.annual:
-      return "Best value for salon owners and designers planning spaces all year.";
+      return "Best value for owners and designers planning spaces all year.";
     default:
       return "Unlock full Beauty Salon AI experience.";
   }

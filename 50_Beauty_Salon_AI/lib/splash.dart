@@ -75,7 +75,7 @@ class _SplashScreenState extends State<SplashScreen>
   void _cycleLoadingText() {
     const variants = [
       "Organizing storage solutions…",
-      "Optimizing shoe flow…",
+      "Optimizing salon flow…",
       "Preparing clean design space…",
       "Setting up utility features…",
       "Loading fresh layouts…",
@@ -139,19 +139,19 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    const bg = BeautyAIColors.charcoal;
-    const primary = BeautyAIColors.roseGold;
+    const bg = BeautyAIColors.bg0; // Light background
+    const primary = BeautyAIColors.primary;
 
     return Scaffold(
       backgroundColor: bg,
       body: Stack(
         children: [
-          // Animated dark backdrop
+          // Animated light backdrop
           Positioned.fill(
             child: AnimatedBackdrop(ctrl: _bgCtrl),
           ),
 
-          // Blur + vignette
+          // Blur + vignette (Light style)
           Positioned.fill(
             child: BackdropFilter(
               filter: ui.ImageFilter.blur(sigmaX: 18, sigmaY: 18),
@@ -159,8 +159,8 @@ class _SplashScreenState extends State<SplashScreen>
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Colors.black.withValues(alpha: 0.35),
-                      Colors.black.withValues(alpha: 0.88),
+                      Colors.white.withValues(alpha: 0.35),
+                      Colors.white.withValues(alpha: 0.88),
                     ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -193,12 +193,12 @@ class _SplashScreenState extends State<SplashScreen>
                             borderRadius: BorderRadius.circular(22),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.45),
+                                color: BeautyAIColors.ink0.withValues(alpha: 0.1),
                                 blurRadius: 26,
                                 offset: const Offset(0, 12),
                               ),
                               BoxShadow(
-                                color: primary.withValues(alpha: 0.22),
+                                color: primary.withValues(alpha: 0.15),
                                 blurRadius: 32,
                                 spreadRadius: 1,
                               ),
@@ -213,23 +213,21 @@ class _SplashScreenState extends State<SplashScreen>
                           ),
                         ),
                         const SizedBox(height: 14),
-                        const Text(
+                        Text(
                           "Beauty Salon AI",
-                          style: TextStyle(
-                            color: Colors.white,
+                          style: BeautyAIText.h1.copyWith(
                             fontSize: 24,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: -0.3,
+                            color: BeautyAIColors.ink0, // Dark text
                           ),
                         ),
                         const SizedBox(height: 4),
                         Transform.translate(
                           offset: Offset(0, _taglineSlide.value),
-                          child: const Text(
+                          child: Text(
                             "Upload a photo and explore elegant, modern beauty salon designs with AI.",
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white70,
+                            style: BeautyAIText.body.copyWith(
+                              color: BeautyAIColors.ink1, // Dark body
                               fontSize: 13,
                             ),
                           ),
@@ -244,7 +242,7 @@ class _SplashScreenState extends State<SplashScreen>
                             child: LinearProgressIndicator(
                               minHeight: 4,
                               backgroundColor:
-                              Colors.white.withValues(alpha: 0.10),
+                              BeautyAIColors.ink0.withValues(alpha: 0.10),
                               valueColor:
                               AlwaysStoppedAnimation<Color>(primary),
                             ),
@@ -267,8 +265,8 @@ class _SplashScreenState extends State<SplashScreen>
                             _loadingText,
                             key: ValueKey(_loadingText),
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: Colors.white54,
+                            style: BeautyAIText.caption.copyWith(
+                              color: BeautyAIColors.muted, // Dark muted
                               fontSize: 11.5,
                             ),
                           ),
@@ -290,18 +288,18 @@ class _SplashScreenState extends State<SplashScreen>
               opacity: 0.82,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Icon(
                     Icons.verified_user,
                     size: 14,
-                    color: Color(0xFF9CA3AF),
+                    color: BeautyAIColors.muted,
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     "Your room photos stay private and are only used to generate salon designs.",
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color(0xFF6B7280),
+                    style: BeautyAIText.caption.copyWith(
+                      color: BeautyAIColors.muted,
                       fontSize: 9.5,
                     ),
                   ),

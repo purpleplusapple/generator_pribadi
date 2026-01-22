@@ -11,8 +11,6 @@ import 'root_shell.dart';
 import 'src/app_assets.dart';
 import 'src/constant.dart' show openPaywallFromUserAction, premiumListenable;
 
-
-
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -265,7 +263,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.black.withValues(alpha: 0.92),
+        backgroundColor: BeautyAIColors.ink0.withValues(alpha: 0.92),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -273,7 +271,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           children: [
             const Icon(
               Icons.warning,
-              color: Color(0xFFFB7185),
+              color: BeautyAIColors.error,
               size: 18,
             ),
             const SizedBox(width: 8),
@@ -337,10 +335,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   Widget build(BuildContext context) {
     final progress = (_page + 1) / _totalPages;
 
-    const primary = BeautyAIColors.roseGold;
-    const secondary = BeautyAIColors.metallicGold;
-    const accentSoft = BeautyAIColors.sageGreen;
-    const bg = BeautyAIColors.charcoal;
+    const primary = BeautyAIColors.primary;
+    const secondary = BeautyAIColors.accent;
+    const bg = BeautyAIColors.bg0; // Light background
 
     return Scaffold(
       backgroundColor: bg,
@@ -356,7 +353,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               ),
             ),
 
-            // Blur + overlay
+            // Blur + overlay (Light style)
             Positioned.fill(
               child: BackdropFilter(
                 filter: ui.ImageFilter.blur(sigmaX: 16, sigmaY: 16),
@@ -366,9 +363,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        bg.withValues(alpha: 0.97),
-                        const Color(0xFF132835).withValues(alpha: 0.96),
-                        const Color(0xFF0D1F2D).withValues(alpha: 0.96),
+                        Colors.white.withValues(alpha: 0.8),
+                        Colors.white.withValues(alpha: 0.95),
                       ],
                     ),
                   ),
@@ -390,7 +386,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(14),
                             border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.08),
+                              color: BeautyAIColors.ink0.withValues(alpha: 0.08),
                             ),
                             color: primary.withValues(alpha: 0.12),
                           ),
@@ -401,13 +397,11 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                           ),
                         ),
                         const SizedBox(width: 8),
-                        const Text(
+                        Text(
                           "Beauty Salon AI",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w900,
+                          style: BeautyAIText.h3.copyWith(
+                            color: BeautyAIColors.ink0, // Dark text
                             fontSize: 18,
-                            letterSpacing: 0.1,
                           ),
                         ),
                         const Spacer(),
@@ -416,13 +410,13 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                           builder: (_, isPro, __) {
                             final chipColor = isPro
                                 ? secondary.withValues(alpha: 0.16)
-                                : Colors.white.withValues(alpha: 0.06);
+                                : BeautyAIColors.ink0.withValues(alpha: 0.06);
                             final borderColor =
-                            isPro ? secondary : Colors.white24;
+                            isPro ? secondary : BeautyAIColors.ink0.withValues(alpha: 0.2);
                             final iconColor =
-                            isPro ? secondary : Colors.white70;
+                            isPro ? secondary : BeautyAIColors.muted;
                             final textColor =
-                            isPro ? secondary : Colors.white70;
+                            isPro ? secondary : BeautyAIColors.muted;
                             return Container(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 6),
@@ -470,7 +464,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                       child: LinearProgressIndicator(
                         value: progress,
                         minHeight: 6,
-                        backgroundColor: Colors.white.withValues(alpha: 0.10),
+                        backgroundColor: BeautyAIColors.ink0.withValues(alpha: 0.10),
                         valueColor: const AlwaysStoppedAnimation(primary),
                       ),
                     ),
@@ -483,17 +477,16 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                       children: [
                         Text(
                           _stepLabel(),
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 12,
+                          style: BeautyAIText.caption.copyWith(
+                            color: BeautyAIColors.muted, // Darker
                           ),
                         ),
                         if (_questionLabel().isNotEmpty) ...[
                           const SizedBox(height: 2),
                           Text(
                             _questionLabel(),
-                            style: const TextStyle(
-                              color: Colors.white38,
+                            style: BeautyAIText.caption.copyWith(
+                              color: BeautyAIColors.muted.withValues(alpha: 0.7),
                               fontSize: 11,
                             ),
                           ),
@@ -592,7 +585,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   return Opacity(
                     opacity: Curves.easeOut.transform(_overlayAnim.value),
                     child: Container(
-                      color: Colors.black.withValues(alpha: 0.40),
+                      color: Colors.white.withValues(alpha: 0.8), // Light overlay
                       child: Stack(
                         children: [
                           Positioned.fill(
@@ -608,8 +601,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                                     end: Alignment.bottomCenter,
                                     colors: [
                                       primary.withValues(alpha: 0.10),
-                                      accentSoft.withValues(alpha: 0.06),
-                                      Colors.black.withValues(alpha: 0.70),
+                                      Colors.white.withValues(alpha: 0.9),
                                     ],
                                   ),
                                 ),
@@ -628,9 +620,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                                   child: Text(
                                     msg,
                                     textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: 13,
+                                    style: BeautyAIText.body.copyWith(
+                                      color: BeautyAIColors.ink0, // Dark text
                                     ),
                                   ),
                                 ),
@@ -698,23 +689,21 @@ class _IntroPage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 22),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               Text(
                 "Beauty Salon AI",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
+                style: BeautyAIText.h1.copyWith(
+                  color: BeautyAIColors.ink0, // Dark title
                   fontSize: 26,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: -0.3,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 "Upload a photo and let AI create a stunning, organized beauty salon space with previews you can save and share.",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white70,
+                style: BeautyAIText.body.copyWith(
+                  color: BeautyAIColors.ink1, // Dark body
                   height: 1.35,
                 ),
               ),
@@ -745,20 +734,18 @@ class _NamePage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
+              Text(
                 "Let's personalize your space",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w900,
+                style: BeautyAIText.h2.copyWith(
+                  color: BeautyAIColors.ink0, // Dark title
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 "What should we call you inside Beauty Salon AI?",
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white70),
+                style: BeautyAIText.body.copyWith(color: BeautyAIColors.ink1),
               ),
               const SizedBox(height: 18),
               AnimatedScale(
@@ -769,12 +756,12 @@ class _NamePage extends StatelessWidget {
                   padding:
                   const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.06),
+                    color: BeautyAIColors.ink0.withValues(alpha: 0.06),
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
                       color: isFilled
-                          ? BeautyAIColors.roseGold
-                          : Colors.white24,
+                          ? BeautyAIColors.primary
+                          : BeautyAIColors.ink0.withValues(alpha: 0.2),
                       width: isFilled ? 1.2 : 0.8,
                     ),
                   ),
@@ -783,13 +770,13 @@ class _NamePage extends StatelessWidget {
                     focusNode: focusNode,
                     onTap: () => HapticFeedback.selectionClick(),
                     textInputAction: TextInputAction.done,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: BeautyAIColors.ink0, // Dark text in input
                       fontWeight: FontWeight.w600,
                     ),
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       hintText: "Enter your name",
-                      hintStyle: TextStyle(color: Colors.white54),
+                      hintStyle: TextStyle(color: BeautyAIColors.muted),
                       border: InputBorder.none,
                     ),
                   ),
@@ -827,10 +814,8 @@ class _QuestionPage extends StatelessWidget {
               Text(
                 question.title,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w900,
+                style: BeautyAIText.h2.copyWith(
+                  color: BeautyAIColors.ink0,
                 ),
               ),
               if (question.subtitle != null) ...[
@@ -838,7 +823,7 @@ class _QuestionPage extends StatelessWidget {
                 Text(
                   question.subtitle!,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white70),
+                  style: BeautyAIText.body.copyWith(color: BeautyAIColors.ink1),
                 ),
               ],
               const SizedBox(height: 18),
@@ -855,12 +840,12 @@ class _QuestionPage extends StatelessWidget {
                       curve: Curves.easeOut,
                       margin: const EdgeInsets.symmetric(vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: isSel ? 0.10 : 0.06),
+                        color: BeautyAIColors.ink0.withValues(alpha: isSel ? 0.05 : 0.02),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
                           color: isSel
-                              ? BeautyAIColors.roseGold
-                              : Colors.white24,
+                              ? BeautyAIColors.primary
+                              : BeautyAIColors.ink0.withValues(alpha: 0.1),
                           width: isSel ? 1.2 : 0.8,
                         ),
                       ),
@@ -881,14 +866,14 @@ class _QuestionPage extends StatelessWidget {
                                 : Icons.circle_outlined,
                             key: ValueKey(isSel),
                             color: isSel
-                                ? BeautyAIColors.roseGold
-                                : Colors.white54,
+                                ? BeautyAIColors.primary
+                                : BeautyAIColors.muted,
                           ),
                         ),
                         title: Text(
                           txt,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: BeautyAIColors.ink0, // Dark text
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -983,8 +968,8 @@ class _PageDots extends StatelessWidget {
             width: active ? 18 : 6,
             decoration: BoxDecoration(
               color: active
-                  ? BeautyAIColors.roseGold
-                  : Colors.white24,
+                  ? BeautyAIColors.primary
+                  : BeautyAIColors.ink0.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(99),
             ),
           );
@@ -1045,9 +1030,8 @@ class _TipTickerState extends State<_TipTicker> {
         child: Text(
           tips[i],
           textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: Colors.white54,
-            fontSize: 12,
+          style: BeautyAIText.caption.copyWith(
+            color: BeautyAIColors.muted, // Dark
           ),
         ),
       ),
@@ -1068,8 +1052,8 @@ class AnimatedBackdrop extends StatelessWidget {
           center: Alignment.topLeft,
           radius: 1.2,
           colors: [
-            BeautyAIColors.roseGold, // aqua
-            BeautyAIColors.charcoal,
+            BeautyAIColors.bg0,
+            BeautyAIColors.bg1,
           ],
         ),
       ),
@@ -1094,7 +1078,7 @@ class GlassButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = primary ? BeautyAIColors.roseGold : Colors.white70;
+    final color = primary ? BeautyAIColors.primary : BeautyAIColors.ink0.withValues(alpha: 0.7);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
@@ -1108,11 +1092,11 @@ class GlassButton extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(999),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.28),
+                color: primary ? BeautyAIColors.primary.withValues(alpha: 0.3) : BeautyAIColors.ink0.withValues(alpha: 0.1),
               ),
               color: primary
-                  ? color.withValues(alpha: 0.18)
-                  : Colors.white.withValues(alpha: 0.06),
+                  ? color.withValues(alpha: 0.1)
+                  : Colors.white.withValues(alpha: 0.4),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
