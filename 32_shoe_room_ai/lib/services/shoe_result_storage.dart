@@ -40,6 +40,23 @@ class LaundryResultStorage {
     }
   }
 
+  /// Load multiple ShoeAIConfig results by ID
+  Future<List<ShoeAIConfig?>> loadResults(List<String> ids) async {
+    return ids.map((id) {
+      final key = '$_keyPrefix$id';
+      final json = _prefs.getString(key);
+
+      if (json == null) return null;
+
+      try {
+        final map = jsonDecode(json) as Map<String, dynamic>;
+        return ShoeAIConfig.fromJson(map);
+      } catch (e) {
+        return null;
+      }
+    }).toList();
+  }
+
   /// Delete a result by ID
   Future<void> deleteResult(String id) async {
     final key = '$_keyPrefix$id';
