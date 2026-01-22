@@ -81,47 +81,47 @@ class _BubblePainter extends CustomPainter {
 
   final double animation;
 
+  // Define 4 drifting blobs with different speeds and positions
+  static final _blobs = [
+    _BlobConfig(
+      color: ShoeAIColors.leatherTan.withValues(alpha: 0.04),
+      startX: 0.2,
+      startY: 0.3,
+      radius: 0.4,
+      speedX: 0.15,
+      speedY: 0.1,
+    ),
+    _BlobConfig(
+      color: ShoeAIColors.metallicGold.withValues(alpha: 0.03),
+      startX: 0.7,
+      startY: 0.2,
+      radius: 0.35,
+      speedX: -0.12,
+      speedY: 0.08,
+    ),
+    _BlobConfig(
+      color: ShoeAIColors.laceGray.withValues(alpha: 0.02),
+      startX: 0.5,
+      startY: 0.7,
+      radius: 0.3,
+      speedX: 0.1,
+      speedY: -0.15,
+    ),
+    _BlobConfig(
+      color: ShoeAIColors.leatherTan.withValues(alpha: 0.03),
+      startX: 0.1,
+      startY: 0.8,
+      radius: 0.25,
+      speedX: 0.18,
+      speedY: -0.12,
+    ),
+  ];
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()..style = PaintingStyle.fill;
 
-    // Define 4 drifting blobs with different speeds and positions
-    final blobs = [
-      _BlobConfig(
-        color: ShoeAIColors.leatherTan.withValues(alpha: 0.04),
-        startX: 0.2,
-        startY: 0.3,
-        radius: 0.4,
-        speedX: 0.15,
-        speedY: 0.1,
-      ),
-      _BlobConfig(
-        color: ShoeAIColors.metallicGold.withValues(alpha: 0.03),
-        startX: 0.7,
-        startY: 0.2,
-        radius: 0.35,
-        speedX: -0.12,
-        speedY: 0.08,
-      ),
-      _BlobConfig(
-        color: ShoeAIColors.laceGray.withValues(alpha: 0.02),
-        startX: 0.5,
-        startY: 0.7,
-        radius: 0.3,
-        speedX: 0.1,
-        speedY: -0.15,
-      ),
-      _BlobConfig(
-        color: ShoeAIColors.leatherTan.withValues(alpha: 0.03),
-        startX: 0.1,
-        startY: 0.8,
-        radius: 0.25,
-        speedX: 0.18,
-        speedY: -0.12,
-      ),
-    ];
-
-    for (final blob in blobs) {
+    for (final blob in _blobs) {
       // Calculate drifting position
       final centerX = size.width *
           (blob.startX +
