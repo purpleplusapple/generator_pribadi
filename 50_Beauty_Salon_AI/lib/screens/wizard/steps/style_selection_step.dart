@@ -1,10 +1,6 @@
-// lib/screens/wizard/steps/style_selection_step.dart
-// Style selection step with 6 category groups
-
 import 'package:flutter/material.dart';
 import '../../../theme/beauty_salon_ai_theme.dart';
-import '../../../widgets/glass_card.dart';
-import '../../../widgets/style_chip.dart';
+import '../../../widgets/editorial_look_card.dart'; // New component
 import '../wizard_controller.dart';
 
 class StyleSelectionStep extends StatefulWidget {
@@ -81,64 +77,57 @@ class _StyleSelectionStepState extends State<StyleSelectionStep> {
         final selectedCount = selections.length;
 
         return SingleChildScrollView(
-          padding: const EdgeInsets.all(BeautyAISpacing.base),
+          padding: const EdgeInsets.only(bottom: 100), // Space for bottom bar
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: BeautyAISpacing.lg),
-
-              // Title
-              Text(
-                'Choose Your Style',
-                style: BeautyAIText.h2,
-                textAlign: TextAlign.center,
-              ),
-
-              const SizedBox(height: BeautyAISpacing.sm),
-
-              // Subtitle
-              Text(
-                'Select options from at least 2 categories to continue',
-                style: BeautyAIText.body.copyWith(
-                  color: BeautyAIColors.creamWhite.withValues(alpha: 0.7),
-                ),
-                textAlign: TextAlign.center,
-              ),
-
-              const SizedBox(height: BeautyAISpacing.base),
-
-              // Selection counter
-              GlassCard(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: BeautyAISpacing.md,
-                  vertical: BeautyAISpacing.sm,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Padding(
+                padding: const EdgeInsets.all(BeautyAISpacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '$selectedCount of ${_styleOptions.length} categories selected',
-                      style: BeautyAIText.bodyMedium.copyWith(
-                        color: selectedCount >= 2
-                            ? BeautyAIColors.metallicGold
-                            : BeautyAIColors.creamWhite,
+                      'Curate Your Look',
+                      style: BeautyAIText.h2,
+                    ),
+                    const SizedBox(height: BeautyAISpacing.sm),
+                    Text(
+                      'Select at least 2 elements to define your salon\'s aesthetic.',
+                      style: BeautyAIText.body.copyWith(color: BeautyAIColors.muted),
+                    ),
+                    const SizedBox(height: BeautyAISpacing.md),
+                    // Selection counter pill
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: BeautyAIColors.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.check_circle, size: 16, color: BeautyAIColors.primary),
+                          const SizedBox(width: 8),
+                          Text(
+                            '$selectedCount selected',
+                            style: BeautyAIText.caption.copyWith(color: BeautyAIColors.primary, fontWeight: FontWeight.bold),
+                          ),
+                          if (selectedCount > 0) ...[
+                            const SizedBox(width: 12),
+                            GestureDetector(
+                              onTap: _clearAllSelections,
+                              child: Text(
+                                'Clear',
+                                style: BeautyAIText.caption.copyWith(color: BeautyAIColors.muted),
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ),
-                    if (selectedCount > 0)
-                      TextButton(
-                        onPressed: _clearAllSelections,
-                        child: Text(
-                          'Clear All',
-                          style: BeautyAIText.caption.copyWith(
-                            color: BeautyAIColors.error,
-                          ),
-                        ),
-                      ),
                   ],
                 ),
               ),
-
-              const SizedBox(height: BeautyAISpacing.xl),
 
               // Category groups
               ..._styleOptions.entries.map((entry) {
@@ -160,128 +149,55 @@ class _StyleSelectionStepState extends State<StyleSelectionStep> {
     List<String> options,
     String? selectedValue,
   ) {
-    // Check if selected value is custom (not in predefined options)
-    final isCustomSelected = selectedValue != null && !options.contains(selectedValue);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Category title
         Padding(
-          padding: const EdgeInsets.only(
-            left: BeautyAISpacing.xs,
-            bottom: BeautyAISpacing.sm,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: BeautyAISpacing.lg, vertical: BeautyAISpacing.sm),
           child: Text(
-            category,
-            style: BeautyAIText.h3.copyWith(fontSize: 18),
+            category.toUpperCase(),
+            style: BeautyAIText.caption.copyWith(letterSpacing: 1.2, fontWeight: FontWeight.bold),
           ),
         ),
 
-        // Chips
         SizedBox(
-          height: 50,
+          height: 140, // Height for EditorialLookCard
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
-            itemCount: options.length + 1, // +1 for custom button
-            separatorBuilder: (context, index) =>
-                const SizedBox(width: BeautyAISpacing.sm),
+            padding: const EdgeInsets.symmetric(horizontal: BeautyAISpacing.lg),
+            itemCount: options.length,
+            separatorBuilder: (context, index) => const SizedBox(width: BeautyAISpacing.md),
             itemBuilder: (context, index) {
-              // Last item is the custom button
-              if (index == options.length) {
-                return StyleChip(
-                  label: isCustomSelected ? selectedValue! : '+ Custom',
-                  isSelected: isCustomSelected,
-                  onTap: () => _showCustomDialog(category, selectedValue),
-                  icon: isCustomSelected ? Icons.edit_rounded : Icons.add_rounded,
-                );
-              }
-
               final option = options[index];
               final isSelected = selectedValue == option;
 
-              return StyleChip(
-                label: option,
-                isSelected: isSelected,
-                onTap: () => _onOptionSelected(category, option),
+              return SizedBox(
+                width: 120,
+                child: EditorialLookCard(
+                  title: option,
+                  subtitle: 'Tap to select',
+                  icon: _getIconForCategory(category), // Dynamic icon
+                  isSelected: isSelected,
+                  onTap: () => _onOptionSelected(category, option),
+                ),
               );
             },
           ),
         ),
-
         const SizedBox(height: BeautyAISpacing.xl),
       ],
     );
   }
 
-  void _showCustomDialog(String category, String? currentValue) {
-    final controller = TextEditingController(
-      text: currentValue != null && !_styleOptions[category]!.contains(currentValue)
-          ? currentValue
-          : '',
-    );
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: BeautyAIColors.creamWhite,
-        title: Text(
-          'Custom $category',
-          style: BeautyAIText.h3,
-        ),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          maxLength: 50,
-          style: BeautyAIText.body,
-          decoration: InputDecoration(
-            hintText: 'Enter your custom style...',
-            hintStyle: BeautyAIText.body.copyWith(
-              color: BeautyAIColors.charcoal.withValues(alpha: 0.5),
-            ),
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: BeautyAIColors.roseGold),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: BeautyAIColors.roseGold, width: 2),
-            ),
-          ),
-        ),
-        actions: [
-          if (currentValue != null && !_styleOptions[category]!.contains(currentValue))
-            TextButton(
-              onPressed: () {
-                widget.controller.removeStyleSelection(category);
-                Navigator.of(context).pop();
-              },
-              style: TextButton.styleFrom(
-                foregroundColor: BeautyAIColors.error,
-              ),
-              child: const Text('Remove'),
-            ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              final text = controller.text.trim();
-              if (text.isNotEmpty) {
-                widget.controller.setStyleSelection(category, text);
-              }
-              Navigator.of(context).pop();
-            },
-            style: TextButton.styleFrom(
-              foregroundColor: BeautyAIColors.roseGold,
-            ),
-            child: const Text('Save'),
-          ),
-        ],
-      ),
-    );
+  IconData _getIconForCategory(String category) {
+    switch (category) {
+      case 'Interior Style': return Icons.chair_alt_rounded;
+      case 'Color Scheme': return Icons.palette_outlined;
+      case 'Storage / Cabinetry': return Icons.shelves;
+      case 'Workstation Surface': return Icons.table_bar_rounded;
+      case 'Flooring': return Icons.grid_on_rounded;
+      case 'Lighting': return Icons.lightbulb_outline_rounded;
+      default: return Icons.star_outline_rounded;
+    }
   }
 }

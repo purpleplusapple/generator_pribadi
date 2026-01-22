@@ -1,40 +1,41 @@
 // lib/theme/beauty_salon_ai_theme.dart
 // Complete Design System for Beauty Salon AI
-// Elegant beauty salon aesthetic: soft pinks, gold, cream, marble
+// Aesthetic: Clean luxury, glossy, editorial, soft glass
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // =================== COLOR PALETTE ===================
 
-/// Elegant Beauty Salon color palette
+/// High Contrast Beauty Salon color palette
 class BeautyAIColors {
   BeautyAIColors._();
 
-  // Base Colors (soft, elegant)
-  static const creamWhite = Color(0xFFFDFBF7);
-  static const softRose = Color(0xFFF3E5F5); // Very light purple/pink
-  static const charcoal = Color(0xFF333333);
+  // Prompt Specs
+  static const bg0 = Color(0xFFFFF7FB);
+  static const bg1 = Color(0xFFFFFFFF);
+  static const surface = Color(0xFFFFFFFF);
+  static const ink0 = Color(0xFF1B1020); // Titles
+  static const ink1 = Color(0xFF3A2A40); // Body
+  static const muted = Color(0xFF6C5A70); // Secondary
+  static const primary = Color(0xFFC24D7C); // Rose
+  static const primarySoft = Color(0xFFF7D3E3); // Chips/Surfaces
+  static const accent = Color(0xFF7A4EE6); // Orchid Highlight
+  static const line = Color(0xFFE9DCE6);
 
-  // Accent Colors (luxury & beauty)
-  static const roseGold = Color(0xFFB76E79);
-  static const metallicGold = Color(0xFFD4AF37);
-  static const sageGreen = Color(0xFF8FA79A); // Calming accent
+  // Mappings for semantic usage
+  static const mainBackground = bg0;
+  static const textMain = ink0;
+  static const textBody = ink1;
+  static const textMuted = muted;
 
-  // State Colors
-  static const success = Color(0xFF81C784);
-  static const warning = metallicGold;
-  static const error = Color(0xFFE57373);
+  static const success = Color(0xFF4CAF50);
+  static const warning = Color(0xFFFFC107);
+  static const error = Color(0xFFE53935);
 
-  // Opacity variants
-  static Color roseGoldWithOpacity(double opacity) => roseGold.withValues(alpha: opacity);
-  static Color goldWithOpacity(double opacity) => metallicGold.withValues(alpha: opacity);
-  static Color creamWithOpacity(double opacity) => creamWhite.withValues(alpha: opacity);
-
-  // Mappings
-  static const mainBackground = creamWhite;
-  static const textMain = charcoal;
-  static const textMuted = Color(0xFF757575);
+  // Helper Opacities
+  static Color primaryWithOpacity(double opacity) => primary.withValues(alpha: opacity);
+  static Color inkWithOpacity(double opacity) => ink0.withValues(alpha: opacity);
 }
 
 // =================== GRADIENTS ===================
@@ -45,25 +46,28 @@ class BeautyAIGradients {
   static const background = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [BeautyAIColors.creamWhite, Color(0xFFF8F0F2)], // Subtle gradient
+    colors: [BeautyAIColors.bg0, BeautyAIColors.bg1],
   );
 
-  static const primaryCta = LinearGradient(
-    begin: Alignment.centerLeft,
-    end: Alignment.centerRight,
-    colors: [BeautyAIColors.roseGold, BeautyAIColors.metallicGold],
-  );
-
-  static const accentHighlight = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [BeautyAIColors.metallicGold, BeautyAIColors.creamWhite],
-  );
-
-  static const readabilityScrim = LinearGradient(
+  static const glassOverlay = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [Color(0x40FFFFFF), Color(0x00FFFFFF)],
+    colors: [
+      Color(0xCCFFFFFF), // White 80%
+      Color(0x99FFFFFF), // White 60%
+    ],
+  );
+
+  static const primaryRose = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [BeautyAIColors.primary, Color(0xFFA03D65)],
+  );
+
+  static const accentOrchid = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [BeautyAIColors.accent, Color(0xFF6236C5)],
   );
 }
 
@@ -72,54 +76,47 @@ class BeautyAIGradients {
 class BeautyAIText {
   BeautyAIText._();
 
-  // Using Lato or Playfair Display could be nice, but stick to GoogleFonts
-  static final TextStyle _baseStyle = GoogleFonts.lato(
-    color: BeautyAIColors.charcoal,
+  // Headings: Playfair Display
+  static final TextStyle _headingStyle = GoogleFonts.playfairDisplay(
+    color: BeautyAIColors.ink0,
   );
 
-  static final TextStyle _headingStyle = GoogleFonts.playfairDisplay(
-    color: BeautyAIColors.charcoal,
+  // Body: Inter
+  static final TextStyle _bodyStyle = GoogleFonts.inter(
+    color: BeautyAIColors.ink1,
   );
 
   static final h1 = _headingStyle.copyWith(
-    fontSize: 32, fontWeight: FontWeight.w700, height: 1.2, letterSpacing: -0.5,
+    fontSize: 32, fontWeight: FontWeight.w700, height: 1.1, letterSpacing: -0.5,
   );
 
   static final h2 = _headingStyle.copyWith(
-    fontSize: 24, fontWeight: FontWeight.w600, height: 1.3, letterSpacing: -0.3,
+    fontSize: 24, fontWeight: FontWeight.w600, height: 1.2, letterSpacing: -0.3,
   );
 
   static final h3 = _headingStyle.copyWith(
-    fontSize: 20, fontWeight: FontWeight.w600, height: 1.4, letterSpacing: -0.2,
+    fontSize: 20, fontWeight: FontWeight.w600, height: 1.3, letterSpacing: -0.2,
   );
 
-  static final body = _baseStyle.copyWith(
+  static final body = _bodyStyle.copyWith(
     fontSize: 16, fontWeight: FontWeight.w400, height: 1.5,
   );
 
-  static final bodyMedium = _baseStyle.copyWith(
+  static final bodyMedium = _bodyStyle.copyWith(
     fontSize: 16, fontWeight: FontWeight.w500, height: 1.5,
   );
 
-  static final bodySemiBold = _baseStyle.copyWith(
-    fontSize: 16, fontWeight: FontWeight.w600, height: 1.5,
-  );
-
-  static final caption = _baseStyle.copyWith(
+  static final bodySmall = _bodyStyle.copyWith(
     fontSize: 14, fontWeight: FontWeight.w400, height: 1.4,
-    color: BeautyAIColors.charcoal.withValues(alpha: 0.7),
   );
 
-  static final captionMedium = _baseStyle.copyWith(
-    fontSize: 14, fontWeight: FontWeight.w500, height: 1.4,
+  static final caption = _bodyStyle.copyWith(
+    fontSize: 12, fontWeight: FontWeight.w500, height: 1.4,
+    color: BeautyAIColors.muted,
   );
 
-  static final button = _baseStyle.copyWith(
-    fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.5,
-  );
-
-  static final small = _baseStyle.copyWith(
-    fontSize: 12, fontWeight: FontWeight.w400, height: 1.3,
+  static final button = _bodyStyle.copyWith(
+    fontSize: 15, fontWeight: FontWeight.w600, letterSpacing: 0.2,
   );
 }
 
@@ -135,9 +132,7 @@ class BeautyAISpacing {
   static const double lg = 20;
   static const double xl = 24;
   static const double xxl = 32;
-  static const double xxxl = 40;
   static const double huge = 48;
-  static const double massive = 64;
 }
 
 // =================== RADIUS ===================
@@ -145,17 +140,15 @@ class BeautyAISpacing {
 class BeautyAIRadii {
   BeautyAIRadii._();
 
-  static const double chip = 16;      // More rounded
-  static const double button = 24;    // Softer pills
-  static const double card = 24;      // Soft cards
-  static const double cardLarge = 32;
-  static const double modal = 32;
+  static const double sm = 12;
+  static const double md = 18; // Primary shape
+  static const double lg = 24;
+  static const double full = 999;
 
-  static BorderRadius get chipRadius => BorderRadius.circular(chip);
-  static BorderRadius get buttonRadius => BorderRadius.circular(button);
-  static BorderRadius get cardRadius => BorderRadius.circular(card);
-  static BorderRadius get cardLargeRadius => BorderRadius.circular(cardLarge);
-  static BorderRadius get modalRadius => BorderRadius.circular(modal);
+  static BorderRadius get smRadius => BorderRadius.circular(sm);
+  static BorderRadius get mdRadius => BorderRadius.circular(md);
+  static BorderRadius get lgRadius => BorderRadius.circular(lg);
+  static BorderRadius get fullRadius => BorderRadius.circular(full);
 }
 
 // =================== SHADOWS ===================
@@ -163,27 +156,19 @@ class BeautyAIRadii {
 class BeautyAIShadows {
   BeautyAIShadows._();
 
-  // Soft, diffuse shadows for a clean look
-  static List<BoxShadow> get card => [
-    BoxShadow(color: BeautyAIColors.roseGold.withValues(alpha: 0.1), blurRadius: 20, offset: const Offset(0, 8)),
-    BoxShadow(color: BeautyAIColors.charcoal.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4)),
+  // Soft, diffuse shadows (low opacity)
+  static List<BoxShadow> get soft => [
+    BoxShadow(color: BeautyAIColors.ink0.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4)),
   ];
 
-  static List<BoxShadow> get cardElevated => [
-    BoxShadow(color: BeautyAIColors.roseGold.withValues(alpha: 0.15), blurRadius: 30, offset: const Offset(0, 15)),
-    BoxShadow(color: BeautyAIColors.charcoal.withValues(alpha: 0.08), blurRadius: 12, offset: const Offset(0, 6)),
+  static List<BoxShadow> get floating => [
+    BoxShadow(color: BeautyAIColors.ink0.withValues(alpha: 0.08), blurRadius: 24, offset: const Offset(0, 12)),
+    BoxShadow(color: BeautyAIColors.primary.withValues(alpha: 0.05), blurRadius: 16, offset: const Offset(0, 4)),
   ];
 
-  static List<BoxShadow> get modal => [
-    BoxShadow(color: BeautyAIColors.charcoal.withValues(alpha: 0.15), blurRadius: 40, offset: const Offset(0, 20)),
-  ];
-
-  static List<BoxShadow> goldGlow({double opacity = 0.45}) => [
-    BoxShadow(color: BeautyAIColors.metallicGold.withValues(alpha: opacity), blurRadius: 25, spreadRadius: 2),
-  ];
-
-  static List<BoxShadow> roseGlow({double opacity = 0.4}) => [
-    BoxShadow(color: BeautyAIColors.roseGold.withValues(alpha: opacity), blurRadius: 25, spreadRadius: 2),
+  static List<BoxShadow> get glass => [
+     BoxShadow(color: Colors.white.withValues(alpha: 0.5), blurRadius: 0, spreadRadius: 1), // Inner highlight feeling
+     BoxShadow(color: BeautyAIColors.ink0.withValues(alpha: 0.05), blurRadius: 12, offset: const Offset(0, 4)),
   ];
 }
 
@@ -192,12 +177,9 @@ class BeautyAIShadows {
 class BeautyAIGlass {
   BeautyAIGlass._();
 
-  static const double cardBlurSigma = 20;
-  static const double modalBlurSigma = 30;
-  static const double fillOpacity = 0.6; // Higher opacity for lighter theme
-  static const double borderOpacity = 0.3;
-  static const double bubbleHighlightOpacity = 0.2;
-  static const double borderWidth = 1.0;
+  static const double blurSigma = 16;
+  static const double opacity = 0.82; // 82% white
+  static const Color borderColor = BeautyAIColors.line;
 }
 
 // =================== MOTION ===================
@@ -205,44 +187,39 @@ class BeautyAIGlass {
 class BeautyAIMotion {
   BeautyAIMotion._();
 
-  static const Duration fast = Duration(milliseconds: 250);
-  static const Duration standard = Duration(milliseconds: 450);
-  static const Duration slow = Duration(milliseconds: 700);
-  static const Duration resultReveal = Duration(milliseconds: 1200);
+  static const Duration fast = Duration(milliseconds: 200);
+  static const Duration standard = Duration(milliseconds: 350);
+  static const Duration slow = Duration(milliseconds: 600);
 
-  static const Curve standardEasing = Cubic(0.4, 0.0, 0.2, 1.0);
-  static const Curve emphasizedEasing = Cubic(0.4, 0.0, 0.6, 1.0);
-  static const Curve easeOut = Curves.easeOut;
-
-  static const double buttonPressScale = 0.98;
-  static const double cardLiftOffset = -4;
+  static const Curve easeOut = Curves.easeOutCubic;
 }
 
 // =================== THEME DATA ===================
 
 final beautySalonAITheme = ThemeData(
   useMaterial3: true,
-  brightness: Brightness.light, // Switched to light mode for beauty salon
+  brightness: Brightness.light,
 
   colorScheme: ColorScheme.light(
-    primary: BeautyAIColors.roseGold,
-    secondary: BeautyAIColors.metallicGold,
-    tertiary: BeautyAIColors.sageGreen,
-    error: BeautyAIColors.error,
-    surface: BeautyAIColors.creamWhite,
-    onSurface: BeautyAIColors.charcoal,
+    primary: BeautyAIColors.primary,
+    secondary: BeautyAIColors.accent,
+    tertiary: BeautyAIColors.muted,
+    surface: BeautyAIColors.bg0,
+    onSurface: BeautyAIColors.ink0,
     onPrimary: Colors.white,
     onSecondary: Colors.white,
+    outline: BeautyAIColors.line,
   ),
 
-  scaffoldBackgroundColor: BeautyAIColors.creamWhite,
+  scaffoldBackgroundColor: BeautyAIColors.bg0,
 
   appBarTheme: AppBarTheme(
     centerTitle: true,
     elevation: 0,
     backgroundColor: Colors.transparent,
-    foregroundColor: BeautyAIColors.charcoal,
+    foregroundColor: BeautyAIColors.ink0,
     titleTextStyle: BeautyAIText.h3,
+    iconTheme: IconThemeData(color: BeautyAIColors.ink0),
   ),
 
   textTheme: TextTheme(
@@ -255,51 +232,31 @@ final beautySalonAITheme = ThemeData(
     labelLarge: BeautyAIText.button,
   ),
 
-  cardTheme: CardThemeData(
-    elevation: 0,
-    shape: RoundedRectangleBorder(borderRadius: BeautyAIRadii.cardRadius),
-    color: Colors.white.withValues(alpha: 0.8), // Clean white cards
-  ),
-
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       elevation: 0,
-      padding: const EdgeInsets.symmetric(horizontal: BeautyAISpacing.xl, vertical: BeautyAISpacing.base),
-      shape: RoundedRectangleBorder(borderRadius: BeautyAIRadii.buttonRadius),
-      textStyle: BeautyAIText.button,
-      backgroundColor: BeautyAIColors.roseGold,
+      backgroundColor: BeautyAIColors.primary,
       foregroundColor: Colors.white,
-    ),
-  ),
-
-  textButtonTheme: TextButtonThemeData(
-    style: TextButton.styleFrom(
-      padding: const EdgeInsets.symmetric(horizontal: BeautyAISpacing.base, vertical: BeautyAISpacing.sm),
+      shape: RoundedRectangleBorder(borderRadius: BeautyAIRadii.fullRadius),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       textStyle: BeautyAIText.button,
-      foregroundColor: BeautyAIColors.roseGold,
     ),
   ),
 
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
-    fillColor: Colors.white,
+    fillColor: BeautyAIColors.surface,
     border: OutlineInputBorder(
-      borderRadius: BeautyAIRadii.buttonRadius,
-      borderSide: BorderSide(color: BeautyAIColors.roseGold.withValues(alpha: 0.3)),
+      borderRadius: BeautyAIRadii.mdRadius,
+      borderSide: BorderSide(color: BeautyAIColors.line),
     ),
     enabledBorder: OutlineInputBorder(
-      borderRadius: BeautyAIRadii.buttonRadius,
-      borderSide: BorderSide(color: BeautyAIColors.roseGold.withValues(alpha: 0.3)),
+      borderRadius: BeautyAIRadii.mdRadius,
+      borderSide: BorderSide(color: BeautyAIColors.line),
     ),
     focusedBorder: OutlineInputBorder(
-      borderRadius: BeautyAIRadii.buttonRadius,
-      borderSide: const BorderSide(color: BeautyAIColors.roseGold, width: 2),
+      borderRadius: BeautyAIRadii.mdRadius,
+      borderSide: const BorderSide(color: BeautyAIColors.primary, width: 1.5),
     ),
-    hintStyle: TextStyle(color: BeautyAIColors.charcoal.withValues(alpha: 0.4)),
-  ),
-
-  dividerTheme: DividerThemeData(
-    color: BeautyAIColors.charcoal.withValues(alpha: 0.1),
-    thickness: 1,
   ),
 );
