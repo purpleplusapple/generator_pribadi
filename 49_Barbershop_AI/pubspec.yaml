@@ -1,0 +1,57 @@
+name: barbershop_ai
+description: AI-powered barbershop interior design app
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # UI & Theming
+  google_fonts: ^6.1.0
+  flutter_staggered_grid_view: ^0.7.0
+
+  # State & Data
+  shared_preferences: ^2.2.2
+  sqflite: ^2.3.0
+  path: ^1.8.3
+
+  # Image handling
+  image_picker: ^1.0.7
+  image: ^4.1.7
+  flutter_svg: ^2.0.10
+
+  # Sharing
+  share_plus: ^7.2.1
+  image_gallery_saver: ^2.0.3
+  url_launcher: ^6.2.4
+
+  # RevenueCat
+  purchases_flutter: ^6.0.0
+
+  # App review
+  in_app_review: ^2.0.9
+
+  # HTTP
+  http: ^1.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  sqflite_common_ffi: ^2.3.2
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/
+    - assets/icon.jpg
+    - assets/examples/
+    - assets/style_tiles/
+    - assets/style_moodboards/
+    - assets/onboarding/
+    - assets/illustrations/
