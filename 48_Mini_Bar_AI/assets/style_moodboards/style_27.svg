@@ -1,0 +1,33 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F57F17;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFF9C4;stop-opacity:1" />
+    </linearGradient>
+    <pattern id="pattern1" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+        <circle cx="2" cy="2" r="1" fill="#FFFFFF33" />
+    </pattern>
+  </defs>
+
+  <!-- Tile 1: Material (Top Left) -->
+  <rect x="0" y="0" width="200" height="200" fill="url(#grad1)" />
+  <text x="100" y="100" font-family="serif" font-size="20" fill="white" text-anchor="middle" dominant-baseline="middle">Material</text>
+
+  <!-- Tile 2: Display (Top Right) -->
+  <rect x="200" y="0" width="200" height="200" fill="#FFF9C4" />
+  <rect x="200" y="0" width="200" height="200" fill="url(#pattern1)" />
+  <text x="300" y="100" font-family="serif" font-size="20" fill="white" text-anchor="middle" dominant-baseline="middle">Display</text>
+
+  <!-- Tile 3: Lighting (Bottom Left) -->
+  <rect x="0" y="200" width="200" height="200" fill="#F57F17" />
+  <circle cx="100" cy="300" r="50" fill="url(#grad1)" fill-opacity="0.5" />
+  <text x="100" y="300" font-family="serif" font-size="20" fill="white" text-anchor="middle" dominant-baseline="middle">Lighting</text>
+
+  <!-- Tile 4: Glassware (Bottom Right) -->
+  <rect x="200" y="200" width="200" height="200" fill="#141A27" />
+  <text x="300" y="300" font-family="serif" font-size="20" fill="white" text-anchor="middle" dominant-baseline="middle">Glassware</text>
+
+  <!-- Overlay Title -->
+  <rect x="0" y="360" width="400" height="40" fill="#000000" fill-opacity="0.6" />
+  <text x="20" y="385" font-family="sans-serif" font-size="16" fill="white">Sink + Ice Station Bar</text>
+</svg>
