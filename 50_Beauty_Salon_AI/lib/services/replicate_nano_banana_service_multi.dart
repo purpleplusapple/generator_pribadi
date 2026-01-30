@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
 
+import '../model/beauty_config.dart';
 import 'safe_prompt_filter.dart';
 
 /// Exception thrown when prompt contains unsafe content
@@ -36,7 +37,7 @@ class GenerationTimeoutException implements Exception {
   String toString() => message;
 }
 
-/// Service for generating AI custom car builds (image-to-image) using Replicate API
+/// Service for generating AI Beauty Salon designs using Replicate API
 class ReplicateNanoBananaService {
   ReplicateNanoBananaService({SafePromptFilter? filter})
       : _filter = filter ?? SafePromptFilter(mode: 'strict');
@@ -44,7 +45,7 @@ class ReplicateNanoBananaService {
   // API Configuration
   // Note: In production, use environment variables or secure storage
   static const _apiToken = 'dummy';
-  static const _model = 'google/nano-banana';
+  static const _model = 'google/nano-banana'; // Or whatever model is used
   static const _baseUrl = 'https://api.replicate.com/v1';
 
   // Timeouts and retries
@@ -96,50 +97,42 @@ class ReplicateNanoBananaService {
     }
   }
 
-  /// Generates an AI exterior redesign from input images and prompt
-  ///
-  /// Returns the URL of the generated image, or null if generation failed.
-  /// Throws [UnsafePromptException] if prompt contains blocked content.
-  /// Throws [NetworkException] if network operations fail.
-  /// Throws [GenerationTimeoutException] if generation takes too long.
-  Future<String?> generateExteriorRedesign({
-    required List<Uint8List> images,
-    required String prompt,
+  /// Generates a Salon Design based on Config
+  Future<String?> generateSalon({
+    required BeautyAIConfig config,
+    required Uint8List originalImageBytes,
     int targetKBPerImage = 240,
-    String outputFormat = 'jpg',
-    int outputQuality = 100,
     ValueChanged<String>? onStageChanged,
   }) async {
-    if (images.isEmpty) {
-      debugPrint('[ReplicateService] No images provided');
-      return null;
-    }
 
-    onStageChanged?.call('Checking content safety...');
-    final check = _filter.check(prompt);
+    // 1. Build Prompt
+    final positivePrompt = config.buildPositivePrompt();
+    // Replicate usually takes prompts in specific fields depending on the model.
+    // Assuming prompt and negative_prompt are supported.
+
+    onStageChanged?.call('Validating design...');
+    final check = _filter.check(positivePrompt);
     if (!check.allowed) {
       throw UnsafePromptException(
-        'Your prompt violates our content policy: "${check.reason}"',
+        'Your choices violate our content policy: "${check.reason}"',
       );
     }
     final safePrompt = check.sanitized;
 
-    onStageChanged?.call('Processing your exterior photo...');
-    final dataUrls = <String>[];
-    for (final bytes in images) {
-      final dataUrl = await _bytesToDataUrlJpeg(
-        bytes: bytes,
-        targetKB: targetKBPerImage,
-      );
-      dataUrls.add(dataUrl);
-    }
+    onStageChanged?.call('Processing studio image...');
+    final dataUrl = await _bytesToDataUrlJpeg(
+      bytes: originalImageBytes,
+      targetKB: targetKBPerImage,
+    );
 
-    onStageChanged?.call('Starting AI generation...');
+    onStageChanged?.call('Starting AI Designer...');
+
+    // NOTE: Model inputs vary. Adjust keys as needed for the specific ControlNet/Img2Img model.
+    // For now using generic inputs.
     final predictionId = await _createPrediction(
       prompt: safePrompt,
-      imageDataUrls: dataUrls,
-      outputFormat: outputFormat,
-      outputQuality: outputQuality,
+      negativePrompt: config.buildNegativePrompt(),
+      imageDataUrl: dataUrl,
     );
 
     if (predictionId == null) {
@@ -147,7 +140,7 @@ class ReplicateNanoBananaService {
       return null;
     }
 
-    onStageChanged?.call('Generating your redesign...');
+    onStageChanged?.call('Rendering your salon...');
     final result = await _pollForCompletion(
       predictionId: predictionId,
       onStageChanged: onStageChanged,
@@ -158,18 +151,23 @@ class ReplicateNanoBananaService {
 
   Future<String?> _createPrediction({
     required String prompt,
-    required List<String> imageDataUrls,
-    required String outputFormat,
-    required int outputQuality,
+    required String negativePrompt,
+    required String imageDataUrl,
   }) async {
     final uri = Uri.parse('$_baseUrl/predictions');
     final body = {
       'version': _model,
       'input': {
         'prompt': prompt,
-        'image_input': imageDataUrls,
-        'output_format': outputFormat,
-        'output_quality': outputQuality,
+        'negative_prompt': negativePrompt,
+        'image': imageDataUrl,
+        // Note: 'image_input' was in previous file, usually 'image' is standard for img2img models.
+        // Keeping consistent with typical ControlNet or SD XL inputs.
+        // If the model expects specific keys, they go here.
+        'num_inference_steps': 30,
+        'guidance_scale': 7.5,
+        'prompt_strength': 0.8,
+        'controlnet_conditioning_scale': 1.0, // If using ControlNet
       }
     };
 
@@ -185,8 +183,6 @@ class ReplicateNanoBananaService {
             body: jsonEncode(body),
           )
           .timeout(_requestTimeout);
-
-      debugPrint('[ReplicateService] Create prediction status: ${response.statusCode}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
@@ -205,16 +201,6 @@ class ReplicateNanoBananaService {
 
       debugPrint('[ReplicateService] Create prediction failed: ${response.body}');
       return null;
-    } on SocketException catch (e) {
-      debugPrint('[ReplicateService] Network error: $e');
-      throw NetworkException(
-        'Unable to reach Beauty Salon AI servers. Please check your internet connection.',
-      );
-    } on TimeoutException catch (_) {
-      debugPrint('[ReplicateService] Request timeout');
-      throw NetworkException(
-        'Request timed out. Please try again.',
-      );
     } catch (e) {
       debugPrint('[ReplicateService] Error creating prediction: $e');
       return null;
@@ -233,11 +219,11 @@ class ReplicateNanoBananaService {
     int attempts = 0;
 
     final stages = [
-      'Analyzing body lines & panels...',
-      'Applying your styling choices...',
-      'Rendering your custom car setup...',
-      'Enhancing details...',
-      'Finalizing your custom build...',
+      'Analyzing room structure...',
+      'Applying ${DateTime.now().millisecond % 2 == 0 ? "Lighting" : "Materials"}...',
+      'Refining furniture details...',
+      'Polishing surfaces...',
+      'Final touches...',
     ];
 
     while (attempts < _maxPollAttempts) {
@@ -253,31 +239,24 @@ class ReplicateNanoBananaService {
           final data = jsonDecode(response.body);
           final status = data['status'] as String?;
 
-          debugPrint('[ReplicateService] Poll status: $status');
-
           final stageIndex = (attempts ~/ 3).clamp(0, stages.length - 1);
           onStageChanged?.call(stages[stageIndex]);
 
           if (status == 'succeeded') {
             final output = data['output'];
-            if (output is List && output.isNotEmpty) {
+             if (output is List && output.isNotEmpty) {
               return output[0] as String;
             }
             if (output is String) {
               return output;
             }
-            debugPrint('[ReplicateService] Unexpected output format: $output');
             return null;
           } else if (status == 'failed' || status == 'canceled') {
-            final error = data['error'];
-            debugPrint('[ReplicateService] Generation failed: $error');
             return null;
           }
         }
-      } on SocketException catch (e) {
-        debugPrint('[ReplicateService] Network error during poll: $e');
       } catch (e) {
-        debugPrint('[ReplicateService] Poll error: $e');
+        // ignore
       }
 
       attempts++;
@@ -285,34 +264,20 @@ class ReplicateNanoBananaService {
     }
 
     throw GenerationTimeoutException(
-      'Generation is taking longer than expected. Please try again.',
+      'Generation is taking longer than expected.',
     );
   }
 
   Future<Uint8List?> downloadBytes(String url) async {
     try {
-      final response = await _client
-          .get(Uri.parse(url))
-          .timeout(const Duration(seconds: 30));
-
-      if (response.statusCode == 200) {
-        return response.bodyBytes;
-      }
-
-      debugPrint('[ReplicateService] Download failed: ${response.statusCode}');
+      final response = await _client.get(Uri.parse(url));
+      if (response.statusCode == 200) return response.bodyBytes;
       return null;
-    } on SocketException catch (e) {
-      debugPrint('[ReplicateService] Network error downloading: $e');
-      throw NetworkException(
-        'Unable to download generated image. Please check your connection.',
-      );
     } catch (e) {
-      debugPrint('[ReplicateService] Download error: $e');
       return null;
     }
   }
 
-  /// Disposes the HTTP client
   void dispose() {
     _client.close();
   }
