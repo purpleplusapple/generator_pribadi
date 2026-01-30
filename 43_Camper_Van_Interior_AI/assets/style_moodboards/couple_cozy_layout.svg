@@ -1,0 +1,23 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="400" height="400" fill="#101520" />
+
+  <!-- Top Left: Bed/Texture -->
+  <rect x="10" y="10" width="185" height="185" rx="8" fill="#F0B35A" />
+  <circle cx="100" cy="100" r="40" fill="rgba(255,255,255,0.1)" />
+
+  <!-- Top Right: Kitchen/Detail -->
+  <rect x="205" y="10" width="185" height="185" rx="8" fill="#5B8CFF" />
+  <rect x="235" y="40" width="125" height="20" fill="rgba(0,0,0,0.2)" />
+  <rect x="235" y="70" width="125" height="20" fill="rgba(0,0,0,0.2)" />
+
+  <!-- Bottom Left: Storage/Wood -->
+  <rect x="10" y="205" width="185" height="185" rx="8" fill="#F4F1EA" />
+  <line x1="10" y1="250" x2="195" y2="250" stroke="rgba(0,0,0,0.1)" stroke-width="2" />
+  <line x1="10" y1="300" x2="195" y2="300" stroke="rgba(0,0,0,0.1)" stroke-width="2" />
+
+  <!-- Bottom Right: Light/Decor -->
+  <rect x="205" y="205" width="185" height="185" rx="8" fill="#2FA37B" />
+  <circle cx="297" cy="297" r="50" stroke="rgba(255,255,255,0.2)" stroke-width="4" fill="none" />
+
+  <text x="200" y="380" font-family="Arial" font-size="14" fill="white" text-anchor="middle" opacity="0.5">Couple Cozy Layout</text>
+</svg>
