@@ -1,0 +1,28 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="blur" x="0" y="0">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="2" />
+        </filter>
+      </defs>
+      <rect x="0" y="0" width="400" height="400" fill="#FFF7FB" />
+
+      <!-- Top Left: Material/Texture -->
+      <rect x="10" y="10" width="185" height="185" rx="8" fill="#D7B58A" opacity="0.8"/>
+      <circle cx="100" cy="100" r="50" fill="white" opacity="0.2"/>
+
+      <!-- Top Right: Lighting/Vibe -->
+      <rect x="205" y="10" width="185" height="185" rx="8" fill="#FFFFFF" opacity="0.9"/>
+      <circle cx="297" cy="102" r="30" fill="#D7B58A" opacity="0.5" filter="url(#blur)"/>
+
+      <!-- Bottom Left: Furniture/Shape -->
+      <rect x="10" y="205" width="185" height="185" rx="8" fill="#3A2A40" opacity="0.8"/>
+      <rect x="50" y="250" width="100" height="80" fill="white" opacity="0.1"/>
+
+      <!-- Bottom Right: Detail/Accessory -->
+      <rect x="205" y="205" width="185" height="185" rx="8" fill="#FFFFFF" opacity="0.9"/>
+      <line x1="220" y1="220" x2="380" y2="380" stroke="#C24D7C" stroke-width="2" opacity="0.3"/>
+
+      <!-- Text Overlay (Simulated Label) -->
+      <rect x="0" y="360" width="400" height="40" fill="white" opacity="0.9"/>
+      <text x="20" y="385" font-family="Arial" font-size="14" fill="#1B1020">Parisian Chic Salon</text>
+    </svg>

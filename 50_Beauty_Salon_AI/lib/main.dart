@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'theme/beauty_salon_ai_theme.dart';
+import 'theme/beauty_theme.dart';
 import 'services/preferences_service.dart';
 import 'src/constant.dart';
 import 'splash.dart';
@@ -23,7 +23,7 @@ class BeautySalonAIApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Beauty Salon AI',
-      theme: beautySalonAITheme,
+      theme: BeautyTheme.theme,
       debugShowCheckedModeBanner: false,
       home: const SplashScreen(),
     );

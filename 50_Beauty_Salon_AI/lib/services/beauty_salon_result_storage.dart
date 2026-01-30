@@ -1,8 +1,8 @@
 // lib/services/beauty_salon_result_storage.dart
-// Storage service for individual BeautySalonAIConfig results
+// Storage service for individual BeautyAIConfig results
 
 import 'dart:convert';
-import '../model/beauty_salon_ai_config.dart';
+import '../model/beauty_config.dart';
 import 'preferences_service.dart';
 
 class BeautySalonResultStorage {
@@ -15,8 +15,8 @@ class BeautySalonResultStorage {
     return '${DateTime.now().millisecondsSinceEpoch}';
   }
 
-  /// Save a BeautySalonAIConfig and return its unique ID
-  Future<String> saveResult(BeautySalonAIConfig config) async {
+  /// Save a BeautyAIConfig and return its unique ID
+  Future<String> saveResult(BeautyAIConfig config) async {
     final id = _generateId();
     final key = '$_keyPrefix$id';
     final json = jsonEncode(config.toJson());
@@ -25,8 +25,8 @@ class BeautySalonResultStorage {
     return id;
   }
 
-  /// Load a BeautySalonAIConfig by ID
-  Future<BeautySalonAIConfig?> loadResult(String id) async {
+  /// Load a BeautyAIConfig by ID
+  Future<BeautyAIConfig?> loadResult(String id) async {
     final key = '$_keyPrefix$id';
     final json = _prefs.getString(key);
 
@@ -34,7 +34,7 @@ class BeautySalonResultStorage {
 
     try {
       final map = jsonDecode(json) as Map<String, dynamic>;
-      return BeautySalonAIConfig.fromJson(map);
+      return BeautyAIConfig.fromJson(map);
     } catch (e) {
       return null;
     }
